@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { useAppStore } from '../store/useAppStore';
+import { useRouter } from 'expo-router';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -42,16 +44,25 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return <RootLayoutNav loaded={loaded} />;
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({ loaded }: { loaded: boolean }) {
   const colorScheme = useColorScheme();
+  const userContext = useAppStore((state) => state.userContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loaded && !userContext) {
+      router.replace('/onboarding');
+    }
+  }, [loaded, userContext]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DarkTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen name="onboarding/index" options={{ headerShown: false, animation: 'slide_from_bottom' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
