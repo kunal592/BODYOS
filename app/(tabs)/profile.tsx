@@ -83,6 +83,11 @@ export default function ProfileScreen() {
           <LogOut size={20} color="#ef4444" />
           <Text style={styles.logoutText}>Wipe App Data</Text>
         </TouchableOpacity>
+
+        <View style={styles.devFooter}>
+          <Text style={styles.devText}>Developed by</Text>
+          <Text style={styles.devLink}>www.kdxlabs.cloud</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -102,4 +107,7 @@ const styles = StyleSheet.create({
   rowText: { color: '#CCC', fontSize: 16, marginLeft: 16, fontWeight: '500' },
   logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 60, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: '#ef444433', backgroundColor: 'rgba(239,68,68,0.05)' },
   logoutText: { color: '#ef4444', fontWeight: 'bold', marginLeft: 12, fontSize: 16 },
+  devFooter: { marginTop: 60, alignItems: 'center', opacity: 0.3 },
+  devText: { color: '#888', fontSize: 11, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 },
+  devLink: { color: '#FFF', fontSize: 13, fontWeight: 'bold', marginTop: 4 },
 });

@@ -91,4 +91,4 @@ npx expo start
 This app is NOT a simple habit tracker. It is a **Personal Body Optimization System** designed for individuals who want to treat their health with the same rigor they treat their career and engineering projects.
 
 ---
-© 2026 HealthOS. All rights reserved.
+© 2026 HealthOS. Built with ❤️ by [KDX Labs](https://www.kdxlabs.cloud).
