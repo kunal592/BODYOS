@@ -1,0 +1,22 @@
+export const quotes = [
+  "Discipline is doing what needs to be done, even if you don't want to do it.",
+  "Your body is the only place you have to live. Take care of it.",
+  "Small daily improvements are the key to long-term results.",
+  "Consistency beats intensity every single time.",
+  "You don't have to be great to start, but you have to start to be great.",
+  "Focus on the process, not the outcome.",
+  "Take care of your body. It's the only place you have to live.",
+  "The system you follow determines the results you get.",
+  "Health is a long-term investment, not a short-term fix.",
+  "Optimization is a lifelong journey, not a single destination.",
+  "Your future self will thank you for the habits you build today.",
+  "Strength comes from consistency, not intensity.",
+  "The first step to optimization is awareness.",
+  "A healthy body is a guest-chamber for the soul; a sick body is a prison.",
+  "Motivation gets you started. Habit keeps you going.",
+  "The secret of health for both mind and body is not to mourn for the past, worry about the future, or anticipate troubles, but to live in the present moment wisely and earnestly.",
+  "He who has health has hope; and he who has hope has everything.",
+  "To keep the body in good health is a duty... otherwise we shall not be able to keep our mind strong and clear.",
+  "Early to bed and early to rise makes a man healthy, wealthy, and wise.",
+  "Your body is a machine; keep it well-oiled."
+];

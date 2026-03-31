@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Coffee, Accessibility, Target, User } from 'lucide-react-native';
+import { Coffee, Accessibility, Target, User, Sparkles } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -11,14 +11,15 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: '#050505',
           borderTopColor: '#111',
-          paddingTop: 4,
-          height: 60,
+          paddingTop: 8,
+          height: 85,
+          paddingBottom: 20,
         },
         headerShown: false,
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: 'bold',
-          marginBottom: 4,
+          marginTop: 4,
         }
       }}>
       <Tabs.Screen
@@ -40,6 +41,13 @@ export default function TabLayout() {
         options={{
           title: 'Habits',
           tabBarIcon: ({ color }) => <Target size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="motivation"
+        options={{
+          title: 'Boost',
+          tabBarIcon: ({ color }) => <Sparkles size={24} color={color} />,
         }}
       />
       <Tabs.Screen
