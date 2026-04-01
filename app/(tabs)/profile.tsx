@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useAppStore } from '../../store/useAppStore';
 import { User, Settings, LogOut, ChevronRight, Bell, Shield, Info } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import OptimizationReport from '../../components/OptimizationReport';
+import { generateWeeklyReport } from '../../features/progress/reportService';
 
 export default function ProfileScreen() {
-  const { userContext, resetDaily } = useAppStore();
+  const { userContext, resetDaily, optimizationHistory } = useAppStore();
   const router = useRouter();
+
+  const insights = useMemo(() => generateWeeklyReport(optimizationHistory), [optimizationHistory]);
 
   const handleReset = () => {
     Alert.alert(
@@ -31,6 +35,8 @@ export default function ProfileScreen() {
           <Text style={styles.userName}>{userContext.userProfile.gender} Profile</Text>
           <Text style={styles.userMeta}>{userContext.userProfile.age} yrs • {userContext.userProfile.weight}kg • {userContext.userProfile.height}</Text>
         </View>
+
+        <OptimizationReport insights={insights} />
 
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>ACCOUNT</Text>

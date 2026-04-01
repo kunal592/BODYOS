@@ -32,6 +32,12 @@ export interface UserContext {
   };
 }
 
+interface HistoryEntry {
+  date: string; // ISO format
+  completion: number;
+  bodyState: Record<string, BodyStatus>;
+}
+
 interface AppState {
   userContext: UserContext | null;
   tasks: {
@@ -45,12 +51,14 @@ interface AppState {
     streak: number;
     completion: number;
   };
+  optimizationHistory: HistoryEntry[];
   
   // Actions
   setContext: (context: UserContext) => void;
   toggleTask: (section: keyof AppState['tasks'], id: string) => void;
   toggleHabit: (id: string) => void;
   resetDaily: () => void;
+  recordDailyComplete: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -68,6 +76,7 @@ export const useAppStore = create<AppState>()(
         streak: 0,
         completion: 0
       },
+      optimizationHistory: [],
 
       setContext: (context) => {
         const createTasks = (list: string[] = []) => list.map((t, index) => ({ id: `${index}-${t}`, text: t, completed: false }));
@@ -124,19 +133,49 @@ export const useAppStore = create<AppState>()(
         };
       }),
 
-      resetDaily: () => set((state) => ({
-        tasks: {
-          morning: state.tasks.morning.map(t => ({ ...t, completed: false })),
-          afternoon: state.tasks.afternoon.map(t => ({ ...t, completed: false })),
-          evening: state.tasks.evening.map(t => ({ ...t, completed: false })),
-          night: state.tasks.night.map(t => ({ ...t, completed: false }))
-        },
-        habits: state.habits.map(h => ({ ...h, completed: false })),
-        progress: {
-          ...state.progress,
-          completion: 0
+      resetDaily: () => set((state) => {
+        // Record today's data before reset if not already recorded
+        const today = new Date().toDateString();
+        const alreadyRecorded = state.optimizationHistory.some(h => new Date(h.date).toDateString() === today);
+        
+        if (!alreadyRecorded && state.userContext) {
+          state.recordDailyComplete();
         }
-      }))
+
+        return {
+          tasks: {
+            morning: state.tasks.morning.map(t => ({ ...t, completed: false })),
+            afternoon: state.tasks.afternoon.map(t => ({ ...t, completed: false })),
+            evening: state.tasks.evening.map(t => ({ ...t, completed: false })),
+            night: state.tasks.night.map(t => ({ ...t, completed: false }))
+          },
+          habits: state.habits.map(h => ({ ...h, completed: false })),
+          progress: {
+            ...state.progress,
+            completion: 0
+          }
+        };
+      }),
+
+      recordDailyComplete: () => set((state) => {
+        if (!state.userContext) return state;
+
+        const entry: HistoryEntry = {
+          date: new Date().toISOString(),
+          completion: state.progress.completion,
+          bodyState: { ...state.userContext.bodyState }
+        };
+
+        const newStreak = state.progress.completion >= 70 ? state.progress.streak + 1 : 0;
+
+        return {
+          optimizationHistory: [...state.optimizationHistory, entry],
+          progress: {
+            ...state.progress,
+            streak: newStreak
+          }
+        };
+      })
     }),
     {
       name: 'health-os-storage',
