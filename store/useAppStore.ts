@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DietMap, addFoods, removeFoods } from '../features/nutrition/nutritionService';
+import { NUTRITION_MAP } from '../features/nutrition/nutritionMap';
 
 export type BodyStatus = 'bad' | 'moderate' | 'good';
 
@@ -52,13 +54,19 @@ interface AppState {
     completion: number;
   };
   optimizationHistory: HistoryEntry[];
-  
+  // Nutrition
+  enabledNutritionCards: string[];
+  dietMap: DietMap;
+  consumedFoods: string[];
+
   // Actions
   setContext: (context: UserContext) => void;
   toggleTask: (section: keyof AppState['tasks'], id: string) => void;
   toggleHabit: (id: string) => void;
   resetDaily: () => void;
   recordDailyComplete: () => void;
+  toggleNutritionCard: (problemKey: string) => void;
+  toggleFoodConsumed: (food: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -77,6 +85,9 @@ export const useAppStore = create<AppState>()(
         completion: 0
       },
       optimizationHistory: [],
+      enabledNutritionCards: [],
+      dietMap: {},
+      consumedFoods: [],
 
       setContext: (context) => {
         const createTasks = (list: string[] = []) => list.map((t, index) => ({ id: `${index}-${t}`, text: t, completed: false }));
@@ -175,7 +186,31 @@ export const useAppStore = create<AppState>()(
             streak: newStreak
           }
         };
-      })
+      }),
+
+      toggleNutritionCard: (problemKey) => set((state) => {
+        const isEnabled = state.enabledNutritionCards.includes(problemKey);
+        const entry = NUTRITION_MAP[problemKey];
+        if (!entry) return state;
+
+        const newDietMap = isEnabled
+          ? removeFoods(state.dietMap, problemKey)
+          : addFoods(state.dietMap, problemKey, entry.foods);
+
+        return {
+          enabledNutritionCards: isEnabled
+            ? state.enabledNutritionCards.filter(k => k !== problemKey)
+            : [...state.enabledNutritionCards, problemKey],
+          dietMap: newDietMap,
+          consumedFoods: state.consumedFoods.filter(f => Object.keys(newDietMap).includes(f)),
+        };
+      }),
+
+      toggleFoodConsumed: (food) => set((state) => ({
+        consumedFoods: state.consumedFoods.includes(food)
+          ? state.consumedFoods.filter(f => f !== food)
+          : [...state.consumedFoods, food]
+      }))
     }),
     {
       name: 'health-os-storage',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Coffee, Accessibility, Target, User, Sparkles } from 'lucide-react-native';
+import { Coffee, Accessibility, Target, User, Sparkles, Leaf, UtensilsCrossed } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -41,6 +41,20 @@ export default function TabLayout() {
         options={{
           title: 'Habits',
           tabBarIcon: ({ color }) => <Target size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="nutrition"
+        options={{
+          title: 'Nutrition',
+          tabBarIcon: ({ color }) => <Leaf size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="diet"
+        options={{
+          title: 'Diet',
+          tabBarIcon: ({ color }) => <UtensilsCrossed size={24} color={color} />,
         }}
       />
       <Tabs.Screen
