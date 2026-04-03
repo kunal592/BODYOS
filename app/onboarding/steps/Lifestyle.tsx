@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface LifestyleProps {
@@ -14,6 +14,8 @@ const Lifestyle: React.FC<LifestyleProps> = ({ onNext, onBack, initialData }) =>
   const [activity, setActivity] = useState(initialData?.activity || 'No exercise');
   const [sleepTime, setSleepTime] = useState(new Date());
   const [wakeTime, setWakeTime] = useState(new Date());
+  const [showSleepPicker, setShowSleepPicker] = useState(false);
+  const [showWakePicker, setShowWakePicker] = useState(false);
 
   const mealOptions = ['1', '2', '3', '4+'];
   const waterOptions = ['<1L', '1-2L', '2-3L', '3L+'];
@@ -82,23 +84,28 @@ const Lifestyle: React.FC<LifestyleProps> = ({ onNext, onBack, initialData }) =>
       <View style={styles.row}>
         <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
           <Text style={styles.label}>Sleep Time</Text>
-          <DateTimePicker
-            value={sleepTime}
-            mode="time"
-            display="default"
-            themeVariant="dark"
-            onChange={(event: any, date?: Date) => date && setSleepTime(date)}
-          />
+          <Text style={styles.timeHelpText}>When do you usually go to bed?</Text>
+          <TouchableOpacity 
+            style={styles.timeButton}
+            onPress={() => setShowSleepPicker(true)}
+          >
+            <Text style={styles.timeButtonText}>
+              {sleepTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
         </View>
+
         <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
           <Text style={styles.label}>Wake Time</Text>
-          <DateTimePicker
-            value={wakeTime}
-            mode="time"
-            display="default"
-            themeVariant="dark"
-            onChange={(event: any, date?: Date) => date && setWakeTime(date)}
-          />
+          <Text style={styles.timeHelpText}>When do you usually wake up?</Text>
+          <TouchableOpacity 
+            style={styles.timeButton}
+            onPress={() => setShowWakePicker(true)}
+          >
+            <Text style={styles.timeButtonText}>
+              {wakeTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -110,6 +117,60 @@ const Lifestyle: React.FC<LifestyleProps> = ({ onNext, onBack, initialData }) =>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal visible={showSleepPicker} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>SET SLEEP TIME</Text>
+            <Text style={styles.modalSubtitle}>When do you usually go to bed?</Text>
+            <View style={styles.pickerContainer}>
+              <DateTimePicker
+                value={sleepTime}
+                mode="time"
+                display="spinner"
+                themeVariant="dark"
+                textColor="#FFF"
+                onChange={(event: any, date?: Date) => {
+                  if (Platform.OS === 'android') setShowSleepPicker(false);
+                  if (date) setSleepTime(date);
+                }}
+              />
+            </View>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity style={styles.modalDoneButton} onPress={() => setShowSleepPicker(false)}>
+                <Text style={styles.modalDoneText}>Done</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showWakePicker} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>SET WAKE TIME</Text>
+            <Text style={styles.modalSubtitle}>When do you usually wake up?</Text>
+            <View style={styles.pickerContainer}>
+              <DateTimePicker
+                value={wakeTime}
+                mode="time"
+                display="spinner"
+                themeVariant="dark"
+                textColor="#FFF"
+                onChange={(event: any, date?: Date) => {
+                  if (Platform.OS === 'android') setShowWakePicker(false);
+                  if (date) setWakeTime(date);
+                }}
+              />
+            </View>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity style={styles.modalDoneButton} onPress={() => setShowWakePicker(false)}>
+                <Text style={styles.modalDoneText}>Done</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -120,7 +181,8 @@ const styles = StyleSheet.create({
   title: { fontSize: 32, fontWeight: 'bold', color: '#FFF', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#AAA', marginBottom: 32 },
   inputGroup: { marginBottom: 32 },
-  label: { fontSize: 14, fontWeight: '600', color: '#888', marginBottom: 12, textTransform: 'uppercase' },
+  label: { fontSize: 14, fontWeight: '600', color: '#888', marginBottom: 6, textTransform: 'uppercase' },
+  timeHelpText: { fontSize: 12, color: '#555', marginBottom: 12, fontStyle: 'italic' },
   optionsContainer: { flexDirection: 'row', justifyContent: 'space-between' },
   optionButton: {
     flex: 1,
@@ -152,6 +214,15 @@ const styles = StyleSheet.create({
   backButtonText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
   nextButton: { flex: 2, backgroundColor: '#FFF', padding: 18, borderRadius: 16, alignItems: 'center', marginLeft: 8 },
   nextButtonText: { color: '#000', fontSize: 18, fontWeight: 'bold' },
+  timeButton: { backgroundColor: '#1A1A1A', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#333', alignItems: 'center' },
+  timeButtonText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: '#111', padding: 32, borderTopLeftRadius: 32, borderTopRightRadius: 32, alignItems: 'center', minHeight: 400 },
+  modalTitle: { fontSize: 24, fontWeight: '900', color: '#FFF', marginBottom: 8, letterSpacing: 1 },
+  modalSubtitle: { fontSize: 15, color: '#888', marginBottom: 32 },
+  pickerContainer: { height: 200, width: '100%', alignItems: 'center', justifyContent: 'center', marginBottom: 32 },
+  modalDoneButton: { backgroundColor: '#4CAF50', paddingVertical: 16, paddingHorizontal: 64, borderRadius: 16, width: '100%', alignItems: 'center' },
+  modalDoneText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
 });
 
 export default Lifestyle;

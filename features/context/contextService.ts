@@ -1,14 +1,21 @@
 import { UserContext } from "../../store/useAppStore";
 
 export const generatePrompt = (userData: any) => {
-  return `You are a health optimization expert. 
-Based on the following USER DATA, generate a structured HEALTH PROTOCOL.
+  return `You are a world-class health optimization doctor. 
+
+I am providing my baseline health data and target problems below. 
+IMPORTANT: Do NOT generate the final health protocol immediately. 
+
+STEP 1: Review my data.
+STEP 2: Ask me 3 to 5 highly specific, diagnostic questions about my 'problems' and lifestyle to uncover root causes. 
+STEP 3: Wait for my response. 
+STEP 4: Only AFTER I answer your questions, generate the final structured HEALTH PROTOCOL.
 
 USER DATA:
 ${JSON.stringify(userData, null, 2)}
 
-OUTPUT FORMAT:
-Return ONLY a strictly valid JSON object matching this structure:
+When you are ready to output the final protocol in Step 4, you MUST return ONLY a strictly valid JSON object matching this exact structure (no markdown formatting, just raw JSON):
+
 {
   "userProfile": { "age": number, "gender": "string", "height": "string", "weight": number },
   "goals": ["string"],
